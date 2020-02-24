@@ -21,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+#if ENABLE_THEORIES
 #include <stdbool.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -53,7 +55,7 @@ static void cri_append_arg(struct cri_theory_ctx *ctx, ffi_type *t, void *val)
     ctx->nargs++;
 }
 
-void cri_theory_push_arg(struct cri_theory_ctx *ctx, bool is_float, size_t size, void *ptr)
+static void cri_theory_push_arg(struct cri_theory_ctx *ctx, bool is_float, size_t size, void *ptr)
 {
     ffi_type *float_ffi_types[] = {
         [sizeof (float)] = &ffi_type_float,
@@ -73,24 +75,24 @@ void cri_theory_push_arg(struct cri_theory_ctx *ctx, bool is_float, size_t size,
     cri_append_arg(ctx, type, ptr);
 }
 
-struct cri_theory_ctx *cr_theory_init(void)
+static struct cri_theory_ctx *cr_theory_init(void)
 {
     return calloc(1, sizeof (struct cri_theory_ctx));
 }
 
-void cr_theory_free(struct cri_theory_ctx *ctx)
+static void cr_theory_free(struct cri_theory_ctx *ctx)
 {
     free(ctx);
 }
 
 static jmp_buf theory_jmp;
 
-void cr_theory_abort(void)
+static void cr_theory_abort(void)
 {
     cri_longjmp(theory_jmp, 1);
 }
 
-void cr_theory_call(struct cri_theory_ctx *ctx, void (*fnptr)(void))
+static void cr_theory_call(struct cri_theory_ctx *ctx, void (*fnptr)(void))
 {
     ffi_cif cif;
     assert(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, ctx->nargs, &ffi_type_void, ctx->types) == FFI_OK);
@@ -193,7 +195,7 @@ static void concat_arg(char (*msg)[BUFSIZE], struct criterion_datapoints *dps, s
     strncat(*msg, arg, BUFSIZE - 1);
 }
 
-int try_call_theory(struct cri_theory_ctx *ctx, void (*fnptr)(void))
+static int try_call_theory(struct cri_theory_ctx *ctx, void (*fnptr)(void))
 {
     if (!cri_setjmp(g_pre_test)) {
         cr_theory_call(ctx, fnptr);
@@ -300,3 +302,11 @@ void cr_theory_main(struct criterion_datapoints *dps, size_t datapoints, void (*
     free(indices);
     cr_theory_free(ctx);
 }
+
+#else
+
+void cr_theory_main(struct criterion_datapoints *dps, size_t datapoints, void (*fnptr)(void))
+{
+}
+
+#if ENABLE_THEORIES

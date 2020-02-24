@@ -21,9 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 #include <stdio.h>
 #include <locale.h>
+
+#ifndef _WIN32
 #include <getopt.h>
+#endif
+
 #include "criterion/criterion.h"
 #include "criterion/options.h"
 #include "criterion/internal/ordered-set.h"
@@ -40,13 +45,25 @@
 # include <libintl.h>
 #endif
 
-#ifdef HAVE_ISATTY
+#if defined HAVE_ISATTY && !defined _WIN32
 # include <unistd.h>
 #endif
 
 #ifdef HAVE_NL_LANGINFO
 # include <langinfo.h>
 #endif
+
+
+#ifdef _WIN32
+//TODO Need to getopt somehow...
+
+CR_API int criterion_handle_args(int argc, char *argv[],
+        bool handle_unknown_arg)
+{
+    return 1;
+}
+
+#else
 
 #define VERSION_MSG    "Tests compiled with Criterion " VERSION "\n"
 
@@ -461,3 +478,5 @@ end:
 
     return 1;
 }
+
+#endif

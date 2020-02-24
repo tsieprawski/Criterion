@@ -31,7 +31,11 @@
 #include "string/fmt.h"
 
 #if defined (HAVE_GETCWD)
-# include <unistd.h>
+# if !defined (_WIN32) || defined (__CYGWIN__)
+#  include <unistd.h>
+# else
+#  define PATH_MAX 256
+# endif
 # include <limits.h>
 #elif defined (HAVE_GETCURRENTDIRECTORY)
 # include <windows.h>

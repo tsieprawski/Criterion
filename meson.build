@@ -169,7 +169,7 @@ else
 endif
 
 libgit2 = dependency('libgit2', required: false)
-if not libgit2.found()
+if get_option('git2') == 'enabled' and not libgit2.found()
 	libgit2_proj = cmake.subproject('libgit2',
 		cmake_options: [
 			'-DBUILD_SHARED_LIBS=OFF',
@@ -189,10 +189,15 @@ if not libgit2.found()
 		])
 	libgit2 = libgit2_proj.dependency('git2')
 endif
+config.set('ENABLE_GIT2', libgit2.found())
 
 boxfort = dependency('boxfort', fallback: ['boxfort', 'boxfort'])
-libffi = dependency('libffi', required: get_option('theories'), fallback: ['libffi', 'ffi_dep'])
 
+if get_option('theories') == 'enabled'
+	libffi = dependency('libffi', required: get_option('theories'), fallback: ['libffi', 'ffi_dep'])
+else
+	libffi = dependency('libffi', required: false)
+endif
 config.set('ENABLE_THEORIES', libffi.found())
 
 # optional platform-dependent standard libs
@@ -217,11 +222,16 @@ deps += [
 	threads,
 	boxfort,
 	libffi,
-	libgit2,
 	nanomsg,
 	librt,
 	libm,
 ]
+if libgit2.found()
+	deps += [libgit2]
+endif
+if libffi.found()
+	deps += [libffi]
+endif
 
 subdir('include')
 subdir('src')

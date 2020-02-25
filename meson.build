@@ -168,8 +168,8 @@ else
 	config.set('NN_REQREP_H', '<nanomsg/reqrep.h>')
 endif
 
-libgit2 = dependency('libgit2', required: false)
-if not libgit2.found()
+libgit2 = dependency('libgit2', required: get_option('libgit2'))
+if not libgit2.found() and get_option('libgit2').enabled()
 	libgit2_proj = cmake.subproject('libgit2',
 		cmake_options: [
 			'-DBUILD_SHARED_LIBS=OFF',
@@ -189,6 +189,7 @@ if not libgit2.found()
 		])
 	libgit2 = libgit2_proj.dependency('git2')
 endif
+config.set('ENABLE_LIBGIT2', get_option('libgit2').enabled())
 
 boxfort = dependency('boxfort', fallback: ['boxfort', 'boxfort'])
 libffi = dependency('libffi', required: get_option('theories'), fallback: ['libffi', 'ffi_dep'])

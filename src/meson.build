@@ -50,7 +50,6 @@ sources = files(
 	'protocol/protocol.c',
 
 	'string/brz.c',
-	'string/diff.c',
 	'string/extglobmatch.c',
 	'string/fmt.c',
 	'string/i18n.c',
@@ -60,6 +59,13 @@ sources = files(
 	meson.current_source_dir() + '/../dependencies/nanopb/pb_encode.c',
 	meson.current_source_dir() + '/../dependencies/nanopb/pb_decode.c',
 )
+
+if get_option('diffs') == 'enabled'
+	sources += files('string/diff.c')
+else
+	sources += files('string/diff-stubs.c')
+endif
+
 if get_option('theories') == 'enabled'
 	sources += files('core/theories.c')
 endif

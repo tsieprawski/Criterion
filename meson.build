@@ -169,7 +169,7 @@ else
 endif
 
 libgit2 = dependency('libgit2', required: false)
-if get_option('git2') == 'enabled' and not libgit2.found()
+if not libgit2.found() and get_option('diffs') == 'enabled'
 	libgit2_proj = cmake.subproject('libgit2',
 		cmake_options: [
 			'-DBUILD_SHARED_LIBS=OFF',
@@ -189,7 +189,6 @@ if get_option('git2') == 'enabled' and not libgit2.found()
 		])
 	libgit2 = libgit2_proj.dependency('git2')
 endif
-config.set('ENABLE_GIT2', libgit2.found())
 
 boxfort = dependency('boxfort', fallback: ['boxfort', 'boxfort'])
 

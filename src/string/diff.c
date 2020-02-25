@@ -22,16 +22,12 @@
  * THE SOFTWARE.
  */
 
-#if ENABLE_GIT2
 #include <git2/diff.h>
 #include <git2/global.h>
 #include <string.h>
-#endif
 
 #include "diff.h"
 #include "fmt.h"
-
-#if ENABLE_GIT2
 
 struct cri_diff_context {
     struct cri_diff_buffer *buf;
@@ -83,17 +79,3 @@ int cri_diff_buffer_to_buffer(const struct cri_diff_buffer *b1,
                    b2->ptr, b2->size, "new",
                    NULL, NULL, NULL, process_hunk, process_line, &ctx);
 }
-
-#else
-
-void cri_diff_init(void)
-{
-}
-
-int cri_diff_buffer_to_buffer(const struct cri_diff_buffer *b1,
-        const struct cri_diff_buffer *b2, struct cri_diff_buffer *out)
-{
-    return 1;
-}
-
-#endif

@@ -170,10 +170,10 @@
 #define ccrFinish(z)     } free(*ccrParam); *ccrParam=0; return (z)
 #define ccrFinishV       } free(*ccrParam); *ccrParam=0; return
 
-#define ccrReturn(z)     \
+#define ccrReturn(z, line)     \
         do {\
-            ((ccrContextTag *)*ccrParam)->ccrLine=__LINE__;\
-            return (z); case __LINE__:;\
+            ((ccrContextTag *)*ccrParam)->ccrLine=line;\
+            return (z); case line:;\
         } while (0)
 #define ccrReturnV       \
         do {\

@@ -30,7 +30,7 @@
 #include "config.h"
 #include "string/fmt.h"
 
-#if defined (HAVE_GETCWD)
+#if defined (HAVE_GETCWD) && !defined (_WIN32) && !defined (__CYGWIN__)
 # include <unistd.h>
 # include <limits.h>
 #elif defined (HAVE_GETCURRENTDIRECTORY)
@@ -64,6 +64,11 @@ const char *basename_compat(const char *str)
 
 char *cri_path_cwd(void)
 {
+#if !defined PATH_MAX && (defined (_WIN32) || defined (__CYGWIN__))
+//TODO How much?
+#define PATH_MAX 256
+#endif
+
 #if defined (HAVE_GETCWD)
     char *cwd = malloc(PATH_MAX);
     if (!cwd || !getcwd(cwd, PATH_MAX))

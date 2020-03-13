@@ -23,7 +23,7 @@
  */
 #include <stdio.h>
 #include <locale.h>
-#include <getopt.h>
+#include "getopt.c"
 #include "criterion/criterion.h"
 #include "criterion/options.h"
 #include "criterion/internal/ordered-set.h"
@@ -40,7 +40,7 @@
 # include <libintl.h>
 #endif
 
-#ifdef HAVE_ISATTY
+#if defined HAVE_ISATTY && (!defined _WIN32 && !defined __CYGWIN__)
 # include <unistd.h>
 #endif
 
@@ -226,7 +226,7 @@ static bool deduce_color(char *arg)
         color = true;
     } else if (!strcmp(arg, "auto")) {
         color = true
-#ifdef HAVE_ISATTY
+#if defined HAVE_ISATTY && (!defined _WIN32 && !defined __CYGWIN__)
             && isatty(STDERR_FILENO)
 #endif
             && strcmp("dumb", DEF(getenv("TERM"), "dumb")) != 0;

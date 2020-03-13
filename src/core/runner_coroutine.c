@@ -420,7 +420,7 @@ bxf_instance *cri_run_next_test(struct criterion_test_set *p_set,
         ctx->stats = p_stats;
         ctx->url = url;
         memset(&ctx->params, 0, sizeof (ctx->params));
-        ccrReturn(NULL);
+        ccrReturn(NULL, 423);
     } while (ctx->set == NULL && ctx->stats == NULL);
 
     for (ctx->ns = ctx->set->suites->first; ctx->ns; ctx->ns = ctx->ns->next) {
@@ -446,13 +446,13 @@ bxf_instance *cri_run_next_test(struct criterion_test_set *p_set,
                     && ctx->test->data->param_) {
                 ctx->params = ctx->test->data->param_();
                 for (ctx->i = 0; ctx->i < ctx->params.length; ++ctx->i)
-                    ccrReturn(run_test(ctx, client));
+                    ccrReturn(run_test(ctx, client), 449);
 
                 if (ctx->params.cleanup)
                     ctx->params.cleanup(&ctx->params);
                 ctx->params.params = NULL;
             } else {
-                ccrReturn(run_test(ctx, client));
+                ccrReturn(run_test(ctx, client), 455);
             }
         }
 
